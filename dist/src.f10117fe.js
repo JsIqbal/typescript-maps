@@ -22697,12 +22697,39 @@ var User = /** @class */function () {
       lng: parseFloat(faker_1.faker.address.longitude())
     };
   }
+  User.prototype.getContent = function () {
+    return "\n            <div>\n                <p>Name of the user is:  ".concat(this.name, "</p>\n            </div>\n        ");
+  };
   return User;
 }();
 exports.User = User;
+},{"@faker-js/faker":"node_modules/@faker-js/faker/dist/esm/index.mjs"}],"src/Company.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Company = void 0;
+var faker_1 = require("@faker-js/faker");
+var Company = /** @class */function () {
+  function Company() {
+    this.companyName = faker_1.faker.company.name();
+    this.catchPhrase = faker_1.faker.company.catchPhrase();
+    this.location = {
+      lat: parseFloat(faker_1.faker.address.latitude()),
+      lng: parseFloat(faker_1.faker.address.longitude())
+    };
+  }
+  Company.prototype.getContent = function () {
+    return "\n            <div>\n                <h4>Name of the user is:  ".concat(this.companyName, "</h4>\n                <P>Catchphrase: ").concat(this.catchPhrase, "</p>\n            </div>\n        ");
+  };
+  return Company;
+}();
+exports.Company = Company;
 },{"@faker-js/faker":"node_modules/@faker-js/faker/dist/esm/index.mjs"}],"src/CustomMap.ts":[function(require,module,exports) {
 "use strict";
 
+/// <reference types="@types/google.maps" />
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -22717,16 +22744,22 @@ var CustomMap = /** @class */function () {
       }
     });
   }
-  CustomMap.prototype.addUserMarker = function (user) {
-    new google.maps.Marker({
+  CustomMap.prototype.addMarker = function (mappabble) {
+    var _this = this;
+    var marker = new google.maps.Marker({
       map: this.googleMap,
       position: {
-        lat: user.location.lat,
-        lng: user.location.lng
+        lat: mappabble.location.lat,
+        lng: mappabble.location.lng
       }
     });
+    var window = new google.maps.InfoWindow({
+      content: mappabble.getContent()
+    });
+    marker.addListener("click", function () {
+      window.open(_this.googleMap, marker);
+    });
   };
-  CustomMap.prototype.addCompanyMarker = function (company) {};
   return CustomMap;
 }();
 exports.CustomMap = CustomMap;
@@ -22737,12 +22770,14 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var User_1 = require("./User");
-// import { Company } from './Company';
+var Company_1 = require("./Company");
 var CustomMap_1 = require("./CustomMap");
 var user = new User_1.User();
-var customMap = new CustomMap_1.CustomMap('map');
-customMap.addUserMarker(user);
-},{"./User":"src/User.ts","./CustomMap":"src/CustomMap.ts"}],"../../.nvm/versions/node/v22.1.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var company = new Company_1.Company();
+var customMap = new CustomMap_1.CustomMap("map");
+customMap.addMarker(user);
+customMap.addMarker(company);
+},{"./User":"src/User.ts","./Company":"src/Company.ts","./CustomMap":"src/CustomMap.ts"}],"../../.nvm/versions/node/v22.1.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -22767,7 +22802,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39529" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45443" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
